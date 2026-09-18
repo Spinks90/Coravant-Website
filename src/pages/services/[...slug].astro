@@ -1,0 +1,130 @@
+---
+import { getCollection, render } from 'astro:content';
+import { Icon } from 'astro-icon/components';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { site } from '../../site.config';
+
+export async function getStaticPaths() {
+  const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
+  return services.map((service, i) => ({
+    params: { slug: service.id },
+    props: {
+      service,
+      others: [...services.slice(i + 1), ...services.slice(0, i)].slice(0, 3),
+    },
+  }));
+}
+
+const { service, others } = Astro.props;
+const { Content } = await render(service);
+
+// Service summaries are deliberately short for the cards. A search snippet
+// needs more than that, so the description carries the context too.
+const metaDescription = `${service.data.summary} ${service.data.title} from Coravant, a six-person software team in West Yorkshire working with UK manufacturers, distributors and retailers.`;
+
+const schema = [
+  {
+    '@type': 'Service',
+    name: service.data.title,
+    description: service.data.summary,
+    provider: { '@id': `${site.url}/#organization` },
+    areaServed: 'GB',
+    url: `${site.url}/services/${service.id}`,
+  },
+  ...(service.data.faqs.length
+    ? [
+        {
+          '@type': 'FAQPage',
+          mainEntity: service.data.faqs.map((faq) => ({
+            '@type': 'Question',
+            name: faq.q,
+            acceptedAnswer: { '@type': 'Answer', text: faq.a },
+          })),
+        },
+      ]
+    : []),
+];
+---
+
+<BaseLayout
+  title={service.data.title}
+  description={metaDescription}
+  schema={schema}
+>
+  <article>
+    <header class="border-b border-line bg-surface">
+      <div class="shell py-14 sm:py-20">
+        <nav aria-label="Breadcrumb" class="mb-6 text-sm text-muted">
+          <a href="/services" class="transition-colors hover:text-brand">Services</a>
+          <span class="mx-2 text-line-strong" aria-hidden="true">/</span>
+          <span class="text-ink">{service.data.title}</span>
+        </nav>
+        <Icon
+          name={`lucide:${service.data.icon}`}
+          class="size-8 text-accent"
+          aria-hidden="true"
+        />
+        <h1 class="mt-5 text-4xl sm:text-5xl">{service.data.title}</h1>
+        <p class="mt-4 max-w-2xl text-lg text-muted">{service.data.summary}</p>
+      </div>
+    </header>
+
+    <div class="shell grid gap-12 py-14 lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-16">
+      <div class="copy">
+        <Content />
+      </div>
+
+      <aside class="lg:sticky lg:top-24 lg:self-start">
+        <div class="rounded border border-line bg-surface p-6">
+          <h2 class="text-lg font-semibold">Talk it through</h2>
+          <p class="mt-2 text-sm text-muted">
+            {site.cal.durationMinutes} minutes with a developer. No obligation, and no sales script.
+          </p>
+          <a href="/book" class="btn btn-primary mt-5 w-full">Book a call</a>
+          <a href="/contact" class="btn btn-ghost mt-3 w-full">Email us</a>
+        </div>
+
+        {
+          others.length > 0 && (
+            <nav class="mt-8" aria-label="Other services">
+              <h2 class="text-sm font-semibold">Other services</h2>
+              <ul class="mt-3 space-y-2 text-sm">
+                {others.map((other) => (
+                  <li>
+                    <a
+                      href={`/services/${other.id}`}
+                      class="text-muted transition-colors hover:text-brand"
+                    >
+                      {other.data.title}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          )
+        }
+      </aside>
+    </div>
+
+    {
+      service.data.faqs.length > 0 && (
+        <section class="border-t border-line bg-surface">
+          <div class="shell py-16">
+            <h2 class="text-2xl sm:text-3xl">Questions we get asked</h2>
+            <dl class="mt-8 max-w-3xl">
+              {service.data.faqs.map((faq) => (
+                <div class="border-t border-line py-6 first:border-t-0 first:pt-0">
+                  <dt class="text-lg font-semibold">{faq.q}</dt>
+                  <dd class="mt-2 leading-relaxed text-muted">{faq.a}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        </section>
+      )
+    }
+  </article>
+
+  <CtaBand />
+</BaseLayout>

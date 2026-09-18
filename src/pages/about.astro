@@ -1,0 +1,117 @@
+---
+import { Icon } from 'astro-icon/components';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionHead from '../components/SectionHead.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { site } from '../site.config';
+
+const principles = [
+  {
+    icon: 'message-square-quote',
+    title: 'We tell you when not to spend',
+    body: 'If the return does not justify the project, saying so costs us one job and earns the next three. We have talked clients out of rewrites more than once.',
+  },
+  {
+    icon: 'user-round-check',
+    title: 'You talk to the developer',
+    body: 'There is no account management layer. The person who scoped the work is the person who writes it and the person who answers when it breaks.',
+  },
+  {
+    icon: 'unlock',
+    title: 'No lock-in',
+    body: 'You own the source code and the documentation from the start. If you want to take it elsewhere, you can, and it will be in a state where somebody else can pick it up.',
+  },
+  {
+    icon: 'ruler',
+    title: 'Fixed prices against written outcomes',
+    body: 'You agree to a result, not to an open-ended day rate. Where something genuinely cannot be fixed-priced we say that up front and explain why.',
+  },
+];
+---
+
+<BaseLayout
+  title="About"
+  description="Coravant is a six-person software development company in West Yorkshire, building and supporting the systems UK businesses run on since 2018."
+>
+  <section class="shell py-16 sm:py-20">
+    <SectionHead
+      as="h1"
+      title="Six developers in West Yorkshire"
+      lead="Coravant has been building business software since 2018. Between us we have around thirty years of experience across SAP, bespoke systems, integration and the shop floor."
+    />
+  </section>
+
+  <section class="shell pb-16">
+    <div class="grid gap-12 lg:grid-cols-[1.2fr_1fr] lg:gap-16">
+      <div class="prose-measure space-y-5 text-lg leading-relaxed">
+        <p>
+          Most of our work arrives the same way. A business has grown, the systems have not kept
+          up, and the gap between them is being filled by people doing things by hand.
+        </p>
+        <p>
+          We are developers rather than consultants, which matters more than it sounds. A
+          consultant configures what a product already does. We change what it does, which is what
+          you need when the off-the-shelf answer has run out of road.
+        </p>
+        <p>
+          Our background is deep in SAP, including ABAP, UI5, OData and S/4HANA, and we are the
+          only UK partner for DataXstream's OMS+ order management software. But the same skills
+          apply whether you run SAP, something smaller, or a system somebody built for you fifteen
+          years ago and nobody has touched since.
+        </p>
+        <p>
+          We have worked across manufacturing, import and distribution, ecommerce, retail, pharmacy
+          and professional services, on projects from a two-week integration to systems that run a
+          business end to end.
+        </p>
+      </div>
+
+      <aside>
+        <div class="rounded border border-line bg-surface p-6">
+          <h2 class="text-lg font-semibold">The facts</h2>
+          <dl class="mt-4 space-y-4 text-sm">
+            <div class="flex justify-between gap-4 border-b border-line pb-3">
+              <dt class="text-muted">Founded</dt>
+              <dd class="font-semibold">{site.founded}</dd>
+            </div>
+            <div class="flex justify-between gap-4 border-b border-line pb-3">
+              <dt class="text-muted">Team</dt>
+              <dd class="font-semibold">6 developers</dd>
+            </div>
+            <div class="flex justify-between gap-4 border-b border-line pb-3">
+              <dt class="text-muted">Based</dt>
+              <dd class="font-semibold">{site.address.locality}, {site.address.region}</dd>
+            </div>
+            <div class="flex justify-between gap-4 border-b border-line pb-3">
+              <dt class="text-muted">Company no.</dt>
+              <dd class="font-semibold">{site.companyNumber}</dd>
+            </div>
+            <div class="flex justify-between gap-4">
+              <dt class="text-muted">Partner</dt>
+              <dd class="text-right font-semibold">DataXstream OMS+, UK</dd>
+            </div>
+          </dl>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="border-y border-line bg-surface">
+    <div class="shell py-20">
+      <SectionHead title="How we work" />
+      <div class="mt-12 grid gap-10 sm:grid-cols-2">
+        {
+          principles.map((principle) => (
+            <div>
+              <Icon name={`lucide:${principle.icon}`} class="size-6 text-brand" aria-hidden="true" />
+              <h3 class="mt-4 text-lg font-semibold">{principle.title}</h3>
+              <p class="mt-2 leading-relaxed text-muted">{principle.body}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <CtaBand />
+</BaseLayout>

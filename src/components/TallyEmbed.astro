@@ -1,0 +1,54 @@
+---
+interface Props {
+  formId: string;
+  title: string;
+  /** Starting height in pixels; Tally resizes the frame to fit once loaded. */
+  height?: number;
+}
+
+const { formId, title, height = 500 } = Astro.props;
+const configured = Boolean(formId) && !formId.startsWith('REPLACE_');
+
+const src = `https://tally.so/embed/${formId}?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1`;
+
+/**
+ * The src is set in the markup rather than deferred to Tally.loadEmbeds(),
+ * which silently does nothing in some load orders. Doing it this way means the
+ * form works with JavaScript disabled and cannot lose a race with embed.js.
+ *
+ * embed.js is still loaded for one reason: it listens for the postMessage that
+ * resizes the frame to fit its content (dynamicHeight=1). Without it the form
+ * still works, just at a fixed height with its own scrollbar.
+ */
+---
+
+{
+  configured ? (
+    <>
+      <iframe
+        src={src}
+        loading="lazy"
+        width="100%"
+        height={height}
+        frameborder="0"
+        marginheight="0"
+        marginwidth="0"
+        title={title}
+        class="w-full"
+      />
+      <script is:inline async src="https://tally.so/widgets/embed.js" />
+    </>
+  ) : (
+    <div class="rounded border border-dashed border-line-strong bg-surface-2 p-6 text-sm text-muted">
+      <p class="font-semibold text-ink">Form not connected yet</p>
+      <p class="mt-2">
+        Add the Tally form ID to <code class="text-accent">src/site.config.ts</code> and the form
+        appears here. In the meantime, email{' '}
+        <a href="mailto:info@coravant.co.uk" class="text-brand underline">
+          info@coravant.co.uk
+        </a>
+        .
+      </p>
+    </div>
+  )
+}

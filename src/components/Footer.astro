@@ -1,0 +1,68 @@
+---
+import { getCollection } from 'astro:content';
+import { Icon } from 'astro-icon/components';
+import Logo from './Logo.astro';
+import { site } from '../site.config';
+
+const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
+const year = new Date().getFullYear();
+---
+
+<footer class="mt-24 border-t border-line bg-surface">
+  <div class="shell grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-4">
+    <div class="lg:col-span-2">
+      <Logo class="h-7 w-auto text-brand" />
+      <p class="mt-4 max-w-xs text-sm text-muted">{site.tagline}.</p>
+      <address class="mt-6 text-sm not-italic text-muted">
+        {site.legalName}<br />
+        {site.address.street}<br />
+        {site.address.locality}, {site.address.postcode}
+      </address>
+      <div class="mt-4 flex flex-col gap-1 text-sm">
+        <a href={`mailto:${site.email}`} class="text-brand hover:underline">{site.email}</a>
+        {site.phone && <a href={`tel:${site.phone.replace(/\s/g, '')}`} class="text-brand hover:underline">{site.phone}</a>}
+      </div>
+      <a
+        href={site.linkedin}
+        rel="me noopener"
+        class="mt-5 inline-flex items-center gap-2 text-sm text-muted transition-colors hover:text-brand"
+      >
+        <Icon name="lucide:linkedin" class="size-4" />
+        LinkedIn
+      </a>
+    </div>
+
+    <div>
+      <h2 class="text-sm font-semibold text-ink">Services</h2>
+      <ul class="mt-4 space-y-2.5 text-sm">
+        {
+          services.map((service) => (
+            <li>
+              <a href={`/services/${service.id}`} class="text-muted transition-colors hover:text-brand">
+                {service.data.title}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <div>
+      <h2 class="text-sm font-semibold text-ink">Company</h2>
+      <ul class="mt-4 space-y-2.5 text-sm">
+        <li><a href="/about" class="text-muted transition-colors hover:text-brand">About</a></li>
+        <li><a href="/blog" class="text-muted transition-colors hover:text-brand">Blog</a></li>
+        <li><a href="/contact" class="text-muted transition-colors hover:text-brand">Contact</a></li>
+        <li><a href="/book" class="text-muted transition-colors hover:text-brand">Book a call</a></li>
+        <li><a href="/privacy" class="text-muted transition-colors hover:text-brand">Privacy</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="border-t border-line">
+    <div class="shell flex flex-col gap-2 py-6 text-xs text-muted sm:flex-row sm:items-center sm:justify-between">
+      <p>&copy; {site.founded}&ndash;{year} {site.legalName}. All rights reserved.</p>
+      <p>Registered in England and Wales, company no. {site.companyNumber}.</p>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,52 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SectionHead from '../../components/SectionHead.astro';
+import PostCard from '../../components/PostCard.astro';
+import CtaBand from '../../components/CtaBand.astro';
+
+const posts = (await getCollection('posts', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+---
+
+<BaseLayout
+  title="Blog"
+  description="Writing about ERP, integration, bespoke software and the practical side of running business systems."
+>
+  <section class="shell py-16 sm:py-20">
+    <SectionHead
+      as="h1"
+      title="Writing"
+      lead="Notes on business systems, written for the people who pay for them rather than the people who maintain them."
+    />
+  </section>
+
+  <section class="shell pb-8">
+    {
+      posts.length > 0 ? (
+        <div class="max-w-3xl">
+          {posts.map((post) => (
+            <PostCard
+              href={`/blog/${post.id}`}
+              title={post.data.title}
+              summary={post.data.summary}
+              date={post.data.date}
+              tag={post.data.tag}
+            />
+          ))}
+        </div>
+      ) : (
+        <p class="text-muted">The first post is on its way.</p>
+      )
+    }
+    <p class="mt-10 text-sm text-muted">
+      <a href="/rss.xml" class="text-brand hover:underline">Subscribe by RSS</a>
+    </p>
+  </section>
+
+  <CtaBand
+    title="Got a problem that needs more than a blog post?"
+    lead="Thirty minutes with a developer will get you further than an afternoon of reading."
+  />
+</BaseLayout>

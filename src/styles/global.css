@@ -1,0 +1,221 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ---------------------------------------------------------------------------
+   Coravant design tokens.
+   Anchor: brand indigo #272661 (from the existing logo).
+   Brass is an annotation colour: rules, marks, diagram highlights. Never body
+   text on light, where it does not clear 4.5:1.
+--------------------------------------------------------------------------- */
+:root {
+  color-scheme: light;
+  --bg: #f7f7fb;
+  --surface: #ffffff;
+  --surface-2: #eeeef6;
+  --border: #dbdbe8;
+  --border-strong: #c2c2d6;
+  --text: #17172e;
+  --muted: #55556f;
+  --brand: #272661;
+  --brand-hover: #35348a;
+  --on-brand: #ffffff;
+  --accent: #8a6410;
+  --accent-mark: #b3862a;
+  --shadow: 0 1px 2px rgb(23 23 46 / 0.06), 0 8px 24px -12px rgb(23 23 46 / 0.18);
+}
+
+.dark {
+  color-scheme: dark;
+  --bg: #111129;
+  --surface: #191936;
+  --surface-2: #222248;
+  --border: #32325c;
+  --border-strong: #454578;
+  --text: #e9e9f5;
+  --muted: #a4a4c4;
+  --brand: #9795ec;
+  --brand-hover: #b0aef5;
+  --on-brand: #111129;
+  --accent: #e2b252;
+  --accent-mark: #e2b252;
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px -12px rgb(0 0 0 / 0.6);
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--border);
+  --color-line-strong: var(--border-strong);
+  --color-ink: var(--text);
+  --color-muted: var(--muted);
+  --color-brand: var(--brand);
+  --color-brand-hover: var(--brand-hover);
+  --color-on-brand: var(--on-brand);
+  --color-accent: var(--accent);
+  --color-accent-mark: var(--accent-mark);
+
+  --font-display: "Archivo Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "IBM Plex Sans Variable", ui-sans-serif, system-ui, sans-serif;
+
+  --shadow-panel: var(--shadow);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-synthesis-weight: none;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  p { text-wrap: pretty; }
+
+  :focus-visible {
+    outline: 2px solid var(--brand);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  .dark :focus-visible { outline-color: var(--accent); }
+
+  ::selection {
+    background: var(--brand);
+    color: var(--on-brand);
+  }
+
+  /* A link sitting inside a sentence must be distinguishable without colour
+     (WCAG 1.4.1), so underline every one rather than relying on each author
+     remembering to add the class. */
+  p a:not([class*="btn"]) {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  /* Shared measurements so every page lines up on the same grid. */
+  .shell { @apply mx-auto w-full max-w-6xl px-5 sm:px-8; }
+  .prose-measure { max-width: 68ch; }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded px-5 py-3 text-[0.95rem] font-semibold;
+    @apply transition-colors duration-150 ease-out;
+    font-family: var(--font-display);
+    letter-spacing: -0.01em;
+  }
+  .btn-primary { @apply bg-brand text-on-brand hover:bg-brand-hover; }
+  .btn-ghost { @apply border border-line-strong text-ink hover:border-brand hover:text-brand; }
+
+  /* The brass tick: a small machined mark used to open a section. Structural,
+     not decorative: it marks where a new idea begins. */
+  .tick::before {
+    content: "";
+    display: block;
+    width: 2.25rem;
+    height: 3px;
+    margin-bottom: 1rem;
+    background: var(--accent-mark);
+  }
+}
+
+/* Hero wiring: the one orchestrated motion moment on the site. Disconnected
+   systems draw themselves into a connected line on load. */
+@keyframes wire-draw {
+  from { stroke-dashoffset: var(--len); }
+  to { stroke-dashoffset: 0; }
+}
+@keyframes node-settle {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes pulse-travel {
+  from { offset-distance: 0%; opacity: 0; }
+  12% { opacity: 1; }
+  88% { opacity: 1; }
+  to { offset-distance: 100%; opacity: 0; }
+}
+
+/* ---------------------------------------------------------------------------
+   Rendered markdown. Hand-rolled rather than pulled from a typography plugin so
+   that every colour comes from the theme tokens and stays correct in both
+   themes without a second set of overrides.
+--------------------------------------------------------------------------- */
+.copy {
+  max-width: 68ch;
+  font-size: 1.0625rem;
+  line-height: 1.75;
+  color: var(--muted);
+}
+.copy > * + * { margin-top: 1.25em; }
+.copy h2 {
+  margin-top: 2.5em;
+  font-size: 1.5rem;
+  line-height: 1.25;
+  color: var(--text);
+}
+.copy h3 {
+  margin-top: 2em;
+  font-size: 1.1875rem;
+  color: var(--text);
+}
+.copy h2 + *, .copy h3 + * { margin-top: 0.75em; }
+.copy strong { color: var(--text); font-weight: 600; }
+.copy a {
+  color: var(--brand);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.copy a:hover { color: var(--brand-hover); }
+.copy ul, .copy ol { padding-left: 1.5em; }
+.copy ul { list-style: disc; }
+.copy ol { list-style: decimal; }
+.copy li + li { margin-top: 0.5em; }
+.copy li::marker { color: var(--accent-mark); }
+.copy blockquote {
+  border-left: 3px solid var(--accent-mark);
+  padding-left: 1.25em;
+  font-size: 1.125rem;
+  color: var(--text);
+}
+.copy code {
+  font-size: 0.9em;
+  color: var(--text);
+  background: var(--surface-2);
+  padding: 0.15em 0.4em;
+  border-radius: 3px;
+}
+.copy pre {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1rem 1.25rem;
+  overflow-x: auto;
+}
+.copy pre code { background: none; padding: 0; }
+.copy img { border-radius: 4px; }
+.copy hr { border-color: var(--border); }

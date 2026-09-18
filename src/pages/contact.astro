@@ -1,0 +1,74 @@
+---
+import { Icon } from 'astro-icon/components';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import TallyEmbed from '../components/TallyEmbed.astro';
+import { site } from '../site.config';
+---
+
+<BaseLayout
+  title="Contact"
+  description="Get in touch with Coravant. Tell us what is going wrong and we will tell you honestly whether we can help."
+>
+  <section class="shell grid gap-12 py-16 lg:grid-cols-[1fr_1.15fr] lg:gap-16 lg:py-20">
+    <div>
+      <h1 class="text-4xl sm:text-5xl">Get in touch</h1>
+      <p class="mt-5 text-lg leading-relaxed text-muted">
+        Tell us what is going wrong. The more specific you are about the problem, the more useful
+        our first reply will be.
+      </p>
+
+      <div class="mt-10 space-y-6">
+        <div class="flex gap-4">
+          <Icon name="lucide:mail" class="mt-1 size-5 shrink-0 text-accent" aria-hidden="true" />
+          <div>
+            <h2 class="font-semibold">Email</h2>
+            <a href={`mailto:${site.email}`} class="text-brand hover:underline">{site.email}</a>
+          </div>
+        </div>
+
+        {
+          site.phone && (
+            <div class="flex gap-4">
+              <Icon name="lucide:phone" class="mt-1 size-5 shrink-0 text-accent" aria-hidden="true" />
+              <div>
+                <h2 class="font-semibold">Phone</h2>
+                <a href={`tel:${site.phone.replace(/\s/g, '')}`} class="text-brand hover:underline">
+                  {site.phone}
+                </a>
+              </div>
+            </div>
+          )
+        }
+
+        <div class="flex gap-4">
+          <Icon name="lucide:map-pin" class="mt-1 size-5 shrink-0 text-accent" aria-hidden="true" />
+          <div>
+            <h2 class="font-semibold">Office</h2>
+            <address class="not-italic text-muted">
+              {site.legalName}<br />
+              {site.address.street}<br />
+              {site.address.locality}<br />
+              {site.address.postcode}
+            </address>
+          </div>
+        </div>
+
+        <div class="flex gap-4">
+          <Icon name="lucide:calendar-clock" class="mt-1 size-5 shrink-0 text-accent" aria-hidden="true" />
+          <div>
+            <h2 class="font-semibold">Rather talk?</h2>
+            <a href="/book" class="text-brand hover:underline">
+              Book a free {site.cal.durationMinutes}-minute call
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="rounded border border-line bg-surface p-6 sm:p-8">
+      <h2 class="text-xl font-semibold">Send an enquiry</h2>
+      <p class="mt-2 mb-6 text-sm text-muted">We reply to everything, usually the same working day.</p>
+      <TallyEmbed formId={site.tally.enquiry} title="Enquiry form" height={680} />
+    </div>
+  </section>
+</BaseLayout>

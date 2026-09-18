@@ -1,0 +1,44 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CtaBand from '../../components/CtaBand.astro';
+
+export async function getStaticPaths() {
+  const cases = await getCollection('cases', ({ data }) => !data.draft);
+  return cases.map((item) => ({ params: { slug: item.id }, props: { item } }));
+}
+
+const { item } = Astro.props;
+const { Content } = await render(item);
+---
+
+<BaseLayout title={item.data.title} description={item.data.summary}>
+  <article>
+    <header class="border-b border-line bg-surface">
+      <div class="shell max-w-3xl py-14 sm:py-20">
+        <nav aria-label="Breadcrumb" class="mb-6 text-sm text-muted">
+          <a href="/work" class="transition-colors hover:text-brand">Work</a>
+          <span class="mx-2 text-line-strong" aria-hidden="true">/</span>
+          <span class="text-ink">{item.data.client}</span>
+        </nav>
+        <p class="text-sm font-semibold text-accent">{item.data.sector}</p>
+        <h1 class="mt-3 text-4xl leading-[1.1] sm:text-5xl">{item.data.title}</h1>
+        <p class="mt-4 text-lg text-muted">{item.data.summary}</p>
+        <div class="mt-8 border-t border-line-strong pt-5">
+          <p class="font-display text-5xl font-bold tracking-[-0.03em] text-brand">
+            {item.data.headline.value}
+          </p>
+          <p class="mt-1 text-muted">{item.data.headline.label}</p>
+        </div>
+      </div>
+    </header>
+
+    <div class="shell max-w-3xl py-14">
+      <div class="copy">
+        <Content />
+      </div>
+    </div>
+  </article>
+
+  <CtaBand />
+</BaseLayout>

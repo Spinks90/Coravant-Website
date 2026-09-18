@@ -1,0 +1,50 @@
+---
+import { site } from '../site.config';
+
+const { ga4, cloudflareToken } = site.analytics;
+
+/**
+ * Emitted verbatim via set:html. Astro treats the body of a <script> tag as raw
+ * text, so a JSX expression written inside one is printed rather than run.
+ */
+const consentScript = `
+window.dataLayer = window.dataLayer || [];
+function gtag(){ dataLayer.push(arguments); }
+window.gtag = gtag;
+
+function loadGa() {
+  if (window.__gaLoaded) return;
+  window.__gaLoaded = true;
+  var s = document.createElement('script');
+  s.async = true;
+  s.src = 'https://www.googletagmanager.com/gtag/js?id=${ga4}';
+  document.head.appendChild(s);
+  gtag('js', new Date());
+  gtag('config', '${ga4}', { anonymize_ip: true });
+}
+
+window.coravantConsent = function (granted) {
+  try { localStorage.setItem('cookie-consent', granted ? 'granted' : 'denied'); } catch (e) {}
+  if (granted) loadGa();
+};
+
+try {
+  if (localStorage.getItem('cookie-consent') === 'granted') loadGa();
+} catch (e) {}
+`;
+---
+
+{/* Cookieless, so it needs no consent and runs for everyone. */}
+{
+  cloudflareToken && (
+    <script
+      is:inline
+      defer
+      src="https://static.cloudflareinsights.com/beacon.min.js"
+      data-cf-beacon={`{"token": "${cloudflareToken}"}`}
+    />
+  )
+}
+
+{/* GA4 sets cookies, so its script is only fetched once consent is given. */}
+{ga4 && <script is:inline set:html={consentScript} />}

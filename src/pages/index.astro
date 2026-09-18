@@ -1,0 +1,223 @@
+---
+import { getCollection } from 'astro:content';
+import { Icon } from 'astro-icon/components';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import HeroDiagram from '../components/HeroDiagram.astro';
+import SectionHead from '../components/SectionHead.astro';
+import ServiceCard from '../components/ServiceCard.astro';
+import PostCard from '../components/PostCard.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { site } from '../site.config';
+
+const services = (await getCollection('services', ({ data }) => data.featured)).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+
+const posts = (await getCollection('posts', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 3);
+
+const problems = [
+  {
+    title: 'The same figures typed into three systems',
+    body: 'Orders come off the website, get keyed into the ERP, then keyed again into the courier portal. Every keystroke is a chance to get it wrong.',
+  },
+  {
+    title: 'A spreadsheet holding the business together',
+    body: 'It works, one person understands it, and everybody quietly hopes they do not leave. That spreadsheet is a system nobody is maintaining.',
+  },
+  {
+    title: 'Software you pay for and work around',
+    body: 'The ERP fits about eighty per cent of how you operate. The other twenty per cent is being handled by memory, email and goodwill.',
+  },
+];
+
+const steps = [
+  {
+    title: 'A call, then a look at the actual work',
+    body: 'Thirty minutes to understand the problem. If it is worth going further we spend a day or two watching how the job is done now, because the process on paper is never the process.',
+  },
+  {
+    title: 'A fixed price against a written outcome',
+    body: 'You get a specific scope, a fixed price and a date. Not a day rate and a hope. If we think the return does not justify the spend, we tell you before you commit.',
+  },
+  {
+    title: 'Built in stages, then supported',
+    body: 'Working software in weeks, not a six-month silence. You can change direction while it is still cheap to. Afterwards you speak to the developers who built it.',
+  },
+];
+---
+
+<BaseLayout>
+  <section class="shell grid items-center gap-12 py-16 lg:grid-cols-[1.05fr_1fr] lg:gap-16 lg:py-24">
+    <div>
+      <h1 class="text-4xl leading-[1.05] sm:text-5xl lg:text-[3.4rem]">
+        Software that fits your business, not the other way round
+      </h1>
+      <p class="mt-6 max-w-xl text-lg leading-relaxed text-muted">
+        We build and fix the systems UK manufacturers, distributors and retailers run on. Six
+        developers, thirty years of combined experience, and no account managers between you and
+        the person writing the code.
+      </p>
+      <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+        <a href="/book" class="btn btn-primary">Book a free {site.cal.durationMinutes}-minute call</a>
+        <a href="/services" class="btn btn-ghost">See what we do</a>
+      </div>
+      <p class="mt-6 text-sm text-muted">
+        Based in West Yorkshire. Working with businesses across the UK since {site.founded}.
+      </p>
+    </div>
+
+    <div class="lg:pl-4">
+      <HeroDiagram />
+    </div>
+  </section>
+
+  <section aria-label="Clients and partners" class="border-y border-line bg-surface">
+    <div class="shell flex flex-wrap items-center gap-x-10 gap-y-4 py-6">
+      <p class="text-sm text-muted">Working with</p>
+      <p class="font-display text-lg font-bold tracking-[-0.02em] text-ink">Roxor Group</p>
+      <p class="flex items-center gap-2 text-sm text-muted">
+        <Icon name="lucide:badge-check" class="size-4 text-accent" aria-hidden="true" />
+        Only UK partner for DataXstream OMS+
+      </p>
+    </div>
+  </section>
+
+  <section class="shell py-20">
+    <SectionHead
+      title="If any of this sounds familiar, it is fixable"
+      lead="These are the three things we are called about most often. None of them need a transformation programme to solve."
+    />
+    <div class="mt-12 grid gap-8 md:grid-cols-3 md:gap-10">
+      {
+        problems.map((problem) => (
+          <div>
+            <div class="h-[3px] w-full bg-accent-mark" />
+            <h3 class="mt-5 text-lg font-semibold">{problem.title}</h3>
+            <p class="mt-3 leading-relaxed text-muted">{problem.body}</p>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="shell pb-20">
+    <SectionHead
+      title="What we do"
+      lead="Eight things, described in plain terms. If your problem does not obviously fit one of them, it probably still fits us."
+    />
+    <div class="mt-10 grid gap-px overflow-hidden rounded border border-line bg-line sm:grid-cols-2 lg:grid-cols-3">
+      {
+        services.map((service) => (
+          <ServiceCard
+            href={`/services/${service.id}`}
+            title={service.data.title}
+            summary={service.data.summary}
+            icon={service.data.icon}
+          />
+        ))
+      }
+    </div>
+    <p class="mt-6">
+      <a href="/services" class="font-semibold text-brand hover:underline">
+        All eight services in detail
+      </a>
+    </p>
+  </section>
+
+  <section class="border-y border-line bg-surface">
+    <div class="shell py-20">
+      <SectionHead
+        title="How working with us goes"
+        lead="Three stages. You can stop after any of them."
+      />
+      <ol class="mt-12 grid gap-10 md:grid-cols-3">
+        {
+          steps.map((step, i) => (
+            <li>
+              <div class="flex items-baseline gap-3">
+                <span class="font-display text-2xl font-bold text-accent">{i + 1}</span>
+                <h3 class="text-lg font-semibold">{step.title}</h3>
+              </div>
+              <p class="mt-3 leading-relaxed text-muted">{step.body}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="shell py-20">
+    <div class="grid gap-12 lg:grid-cols-[1fr_1.1fr] lg:gap-16">
+      <div>
+        <SectionHead title="Small on purpose" />
+        <p class="mt-6 leading-relaxed text-muted prose-measure">
+          There are six of us. That means you get developers with decades behind them rather than
+          whoever was available, and it means we turn down work we are not right for. It also means
+          the person who scopes your project is the person who builds it.
+        </p>
+        <dl class="mt-8 grid gap-6 sm:grid-cols-3">
+          {
+            site.stats.map((stat) => (
+              <div class="border-t border-line-strong pt-4">
+                <dt class="sr-only">{stat.label}</dt>
+                <dd>
+                  <span class="block font-display text-3xl font-bold tracking-[-0.03em]">
+                    {stat.value}
+                    {stat.suffix}
+                  </span>
+                  <span class="mt-1 block text-sm text-muted">{stat.label}</span>
+                </dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+
+      <div>
+        <h2 class="text-xl font-semibold">Sectors we know well</h2>
+        <p class="mt-3 text-muted">
+          Knowing an industry means we spend the first week solving your problem rather than
+          learning your vocabulary.
+        </p>
+        <ul class="mt-6 grid gap-x-6 gap-y-3 sm:grid-cols-2">
+          {
+            site.sectors.map((sector) => (
+              <li class="flex items-center gap-3 border-b border-line pb-3">
+                <Icon name="lucide:check" class="size-4 shrink-0 text-accent" aria-hidden="true" />
+                <span>{sector}</span>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  {
+    posts.length > 0 && (
+      <section class="shell pb-4">
+        <SectionHead title="Recent writing" />
+        <div class="mt-10">
+          {posts.map((post) => (
+            <PostCard
+              href={`/blog/${post.id}`}
+              title={post.data.title}
+              summary={post.data.summary}
+              date={post.data.date}
+              tag={post.data.tag}
+            />
+          ))}
+        </div>
+        <p class="mt-8">
+          <a href="/blog" class="font-semibold text-brand hover:underline">
+            Everything we have written
+          </a>
+        </p>
+      </section>
+    )
+  }
+
+  <CtaBand />
+</BaseLayout>

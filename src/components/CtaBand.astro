@@ -1,0 +1,37 @@
+---
+import { site } from '../site.config';
+
+interface Props {
+  title?: string;
+  lead?: string;
+}
+
+const {
+  title = 'Tell us what is slowing the business down',
+  lead = `A ${site.cal.durationMinutes}-minute call with a developer, not a salesperson. You will get a straight view of whether this is worth doing, and we will say so if it is not.`,
+} = Astro.props;
+---
+
+<section class="mt-24 bg-brand text-on-brand">
+  <div class="shell grid gap-8 py-16 md:grid-cols-[1.4fr_1fr] md:items-center md:py-20">
+    <div>
+      <div class="h-[3px] w-9 bg-accent-mark"></div>
+      <h2 class="mt-4 text-3xl sm:text-4xl">{title}</h2>
+      <p class="mt-4 max-w-xl text-lg opacity-90">{lead}</p>
+    </div>
+    <div class="flex flex-col gap-3 md:items-end">
+      <a
+        href="/book"
+        class="btn w-full bg-on-brand text-brand hover:bg-accent-mark hover:text-[#17172e] md:w-auto"
+      >
+        Book a free {site.cal.durationMinutes}-minute call
+      </a>
+      <a
+        href="/contact"
+        class="btn w-full border border-current text-on-brand hover:bg-white/10 md:w-auto"
+      >
+        Send an enquiry instead
+      </a>
+    </div>
+  </div>
+</section>

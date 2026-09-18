@@ -1,0 +1,59 @@
+---
+import { Icon } from 'astro-icon/components';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CalEmbed from '../components/CalEmbed.astro';
+import TallyEmbed from '../components/TallyEmbed.astro';
+import { site } from '../site.config';
+
+const expectations = [
+  'What is going wrong now, and what it costs you in time or money',
+  'Whether software is the right answer, or whether the fix is simpler',
+  'A rough size and shape, so you know if it is a five or a fifty thousand pound problem',
+  'What the next step would be, and what it would cost',
+];
+---
+
+<BaseLayout
+  title="Book a free consultation"
+  description={`Book a free ${site.cal.durationMinutes}-minute call with a Coravant developer. No sales script, and a straight answer on whether the work is worth doing.`}
+>
+  <section class="shell grid gap-12 py-16 lg:grid-cols-[1fr_1.15fr] lg:gap-16 lg:py-20">
+    <div>
+      <h1 class="text-4xl sm:text-5xl">Book a free {site.cal.durationMinutes}-minute call</h1>
+      <p class="mt-5 text-lg leading-relaxed text-muted">
+        You will speak to a developer, not a salesperson. The purpose of the call is to work out
+        whether we can help, and to tell you if we cannot.
+      </p>
+
+      <h2 class="mt-10 text-lg font-semibold">What we will cover</h2>
+      <ul class="mt-4 space-y-3">
+        {
+          expectations.map((item) => (
+            <li class="flex gap-3 border-b border-line pb-3">
+              <Icon name="lucide:check" class="mt-1 size-4 shrink-0 text-accent" aria-hidden="true" />
+              <span class="text-muted">{item}</span>
+            </li>
+          ))
+        }
+      </ul>
+
+      <p class="mt-8 text-sm text-muted">
+        Would rather write it down first? <a href="/contact" class="text-brand hover:underline">Send an enquiry</a> and we will reply the same working day.
+      </p>
+    </div>
+
+    <div class="rounded border border-line bg-surface p-6 sm:p-8">
+      <CalEmbed>
+        <h2 class="text-xl font-semibold">Tell us when suits</h2>
+        <p class="mt-2 mb-6 text-sm text-muted">
+          Fill this in and we will confirm a time by email, usually within a few hours.
+        </p>
+        <TallyEmbed
+          formId={site.tally.consultation}
+          title="Book a consultation with Coravant"
+          height={620}
+        />
+      </CalEmbed>
+    </div>
+  </section>
+</BaseLayout>

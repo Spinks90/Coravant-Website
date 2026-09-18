@@ -1,0 +1,22 @@
+---
+interface Props {
+  title: string;
+  lead?: string;
+  /** Renders as h2 by default; pages with their own h1 keep it that way. */
+  as?: 'h1' | 'h2';
+  align?: 'left' | 'centre';
+}
+
+const { title, lead, as: Tag = 'h2', align = 'left' } = Astro.props;
+---
+
+<div class:list={['tick', align === 'centre' && 'mx-auto text-center [&::before]:mx-auto']}>
+  <Tag class="text-3xl leading-[1.1] sm:text-4xl">{title}</Tag>
+  {
+    lead && (
+      <p class:list={['mt-4 text-lg text-muted prose-measure', align === 'centre' && 'mx-auto']}>
+        {lead}
+      </p>
+    )
+  }
+</div>

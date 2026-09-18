@@ -427,3 +427,11 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+
+# Astro build output and generated types cache
+dist/
+.astro/
+
+# Playwright
+test-results/
+playwright-report/

@@ -1,0 +1,90 @@
+---
+import { getCollection } from 'astro:content';
+import Logo from './Logo.astro';
+import ThemeToggle from './ThemeToggle.astro';
+import { nav } from '../site.config';
+
+const cases = await getCollection('cases', ({ data }) => !data.draft);
+// Work only appears in the nav once there is work to show.
+const items = nav.filter((item) => item.href !== '/work' || cases.length > 0);
+
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+const isCurrent = (href: string) => path === href || path.startsWith(`${href}/`);
+---
+
+<header class="sticky top-0 z-40 border-b border-line bg-bg/92 backdrop-blur-lg">
+  <div class="shell flex h-16 items-center justify-between gap-4">
+    <a href="/" class="text-brand transition-opacity hover:opacity-80" aria-label="Coravant home">
+      <Logo class="h-6 w-auto sm:h-7" />
+    </a>
+
+    <nav aria-label="Main" class="hidden lg:block">
+      <ul class="flex items-center gap-1">
+        {
+          items.map((item) => (
+            <li>
+              <a
+                href={item.href}
+                aria-current={isCurrent(item.href) ? 'page' : undefined}
+                class="rounded px-3 py-2 text-[0.95rem] font-medium text-muted transition-colors hover:text-ink aria-[current=page]:text-brand"
+              >
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="flex items-center gap-2">
+      <ThemeToggle />
+      <a href="/book" class="btn btn-primary hidden sm:inline-flex">Book a call</a>
+      <button
+        id="menu-toggle"
+        type="button"
+        class="grid size-10 place-items-center rounded border border-line text-muted lg:hidden"
+        aria-label="Open menu"
+        aria-expanded="false"
+        aria-controls="mobile-nav"
+      >
+        <span class="sr-only">Menu</span>
+        <svg viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <nav id="mobile-nav" aria-label="Main" hidden class="border-t border-line bg-surface lg:hidden">
+    <ul class="shell flex flex-col py-2">
+      {
+        items.map((item) => (
+          <li>
+            <a
+              href={item.href}
+              aria-current={isCurrent(item.href) ? 'page' : undefined}
+              class="block border-b border-line py-3 font-medium text-ink last:border-0 aria-[current=page]:text-brand"
+            >
+              {item.label}
+            </a>
+          </li>
+        ))
+      }
+      <li class="pt-3 pb-1">
+        <a href="/book" class="btn btn-primary w-full">Book a call</a>
+      </li>
+    </ul>
+  </nav>
+</header>
+
+<script>
+  const toggle = document.getElementById('menu-toggle');
+  const panel = document.getElementById('mobile-nav');
+
+  toggle?.addEventListener('click', () => {
+    const open = toggle.getAttribute('aria-expanded') === 'true';
+    toggle.setAttribute('aria-expanded', String(!open));
+    toggle.setAttribute('aria-label', open ? 'Open menu' : 'Close menu');
+    if (panel) panel.hidden = open;
+  });
+</script>

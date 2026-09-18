@@ -1,0 +1,18 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Page not found" noindex>
+  <section class="shell py-24 text-center sm:py-32">
+    <p class="font-display text-6xl font-bold tracking-[-0.03em] text-accent">404</p>
+    <h1 class="mt-4 text-3xl sm:text-4xl">That page is not here</h1>
+    <p class="mx-auto mt-4 max-w-md text-muted">
+      It may have moved when we rebuilt the site. The services, blog and contact pages are all
+      still where you would expect.
+    </p>
+    <div class="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+      <a href="/" class="btn btn-primary">Back to the home page</a>
+      <a href="/services" class="btn btn-ghost">See what we do</a>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,60 @@
+---
+import { site } from '../site.config';
+
+// No GA4 configured means no cookies, which means nothing to consent to.
+const needed = Boolean(site.analytics.ga4);
+---
+
+{
+  needed && (
+    <div
+      id="consent-banner"
+      hidden
+      role="dialog"
+      aria-labelledby="consent-title"
+      aria-describedby="consent-body"
+      class="fixed inset-x-3 bottom-3 z-50 rounded border border-line-strong bg-surface p-5 shadow-panel sm:inset-x-auto sm:right-5 sm:bottom-5 sm:max-w-sm"
+    >
+      <h2 id="consent-title" class="font-semibold">Cookies</h2>
+      <p id="consent-body" class="mt-2 text-sm leading-relaxed text-muted">
+        We count visits without cookies. May we also use Google Analytics, which does set them, to
+        see which pages are worth keeping? See our{' '}
+        <a href="/privacy" class="text-brand underline">
+          privacy notice
+        </a>
+        .
+      </p>
+      <div class="mt-4 flex gap-2">
+        <button id="consent-accept" type="button" class="btn btn-primary flex-1 px-4 py-2 text-sm">
+          Accept
+        </button>
+        <button id="consent-decline" type="button" class="btn btn-ghost flex-1 px-4 py-2 text-sm">
+          No thanks
+        </button>
+      </div>
+    </div>
+  )
+}
+
+<script>
+  const banner = document.getElementById('consent-banner');
+
+  if (banner) {
+    let stored: string | null = 'denied'; // storage blocked: assume no, never ask
+    try {
+      stored = localStorage.getItem('cookie-consent');
+    } catch {
+      /* private browsing */
+    }
+
+    if (!stored) banner.hidden = false;
+
+    const decide = (granted: boolean) => {
+      window.coravantConsent?.(granted);
+      banner.hidden = true;
+    };
+
+    document.getElementById('consent-accept')?.addEventListener('click', () => decide(true));
+    document.getElementById('consent-decline')?.addEventListener('click', () => decide(false));
+  }
+</script>
